@@ -8,18 +8,17 @@ defmodule ArcTest.Storage.Local do
 
 
   defmodule DummyDefinition do
-    use Arc.Definition.Storage
-    @acl :public_read
-    def transform(:thumb, _), do: {:convert, "-strip -thumbnail 10x10"}
-    def __versions, do: [:original, :thumb]
-    def storage_dir(_, _), do: "arctest/uploads"
+    use Arc.Definition
     def __storage, do: Arc.Storage.Local
+    @versions [:original, :thumb]
+
+    def transform(:thumb, _), do: {:convert, "-strip -thumbnail 10x10"}
+    def storage_dir(_, _), do: "arctest/uploads"
     def filename(version,  {file, scope}), do: "#{version}-#{file.file_name}"
   end
 
   test "put, delete, get" do
-    assert "original-image.png" == Arc.Storage.Local.put(DummyDefinition, :original, {Arc.File.new(@img), nil})
-    assert "thumb-image.png" == Arc.Storage.Local.put(DummyDefinition, :thumb, {Arc.File.new(@img), nil})
+    DummyDefinition.store({Arc.File.new(@img), nil})
     assert true == File.exists?("arctest/uploads/original-image.png")
     assert true == File.exists?("arctest/uploads/thumb-image.png")
 
@@ -32,7 +31,9 @@ defmodule ArcTest.Storage.Local do
   end
 
   test "save binary" do
-    assert "original-binary.png" == Arc.Storage.Local.put(DummyDefinition, :original, {Arc.File.new("binary", "binary.png"), nil})
+    DummyDefinition.store({Arc.File.new("binary", "binary.png"), nil})
+    assert true == File.exists?("arctest/uploads/original-binary.png")
+    assert true == File.exists?("arctest/uploads/thumb-binary.png")
   end
 
 end

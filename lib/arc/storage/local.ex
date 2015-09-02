@@ -3,14 +3,12 @@ defmodule Arc.Storage.Local do
   def put(definition, version, {file, scope}) do
     destination_dir = definition.storage_dir(version, {file, scope})
     File.mkdir_p(destination_dir)
-    file_name = definition.filename(version, {file, scope})
-
     if file.binary do
-      File.write!(Path.join(destination_dir, file_name), file.binary)
+      File.write!(Path.join(destination_dir, file.file_name), file.binary)
     else
-      {:ok, _} = File.copy(file.path, Path.join(destination_dir, file_name))
+      {:ok, _} = File.copy(file.path, Path.join(destination_dir, file.file_name))
     end
-    file_name
+    file.file_name
   end
 
   def url(definition, version, {file, scope}, options \\ []) do
