@@ -14,7 +14,9 @@ defmodule ArcTest.Storage.Local do
 
     def transform(:thumb, _), do: {:convert, "-strip -thumbnail 10x10"}
     def storage_dir(_, _), do: "arctest/uploads"
-    def filename(version,  {file, scope}), do: "#{version}-#{file.file_name}"
+    def filename(version,  {file, scope}) do
+      "#{version}-#{Path.basename(file.file_name)}"
+    end
   end
 
   test "put, delete, get" do

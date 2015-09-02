@@ -9,14 +9,22 @@ defmodule Arc.Definition.Versioning do
   def resolve_file_name(definition, version, {file, scope}) do
     name = definition.filename(version, {file, scope})
     conversion = definition.transform(version, {file, scope})
-
     case conversion do
-      {:noaction} -> "#{name}#{Path.extname(file.file_name)}"
+      {:noaction} -> filename_with_ext(name, file)
       {:convert, args} ->
         extension = case Regex.run(~r/-format[ ]*(\w*)/, args) do
-          nil -> "#{name}#{Path.extname(file.file_name)}"
+          nil -> filename_with_ext(name, file)
           [_, ext] -> "#{name}.#{ext}"
         end
+    end
+  end
+
+  defp filename_with_ext(name, file) do
+    ext = Path.extname(file.file_name)
+    if String.ends_with?(name, ext) do
+      name
+    else
+      "#{name}#{ext}"
     end
   end
 
