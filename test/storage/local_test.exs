@@ -19,6 +19,12 @@ defmodule ArcTest.Storage.Local do
     end
   end
 
+  defmodule DummyDefinitionBinary do
+    use Arc.Definition
+    def __storage, do: Arc.Storage.Local
+    def storage_dir(_, _), do: "arctest/uploads"
+  end
+
   test "put, delete, get" do
     DummyDefinition.store({Arc.File.new(@img), nil})
     assert true == File.exists?("arctest/uploads/original-image.png")
@@ -33,9 +39,8 @@ defmodule ArcTest.Storage.Local do
   end
 
   test "save binary" do
-    DummyDefinition.store({Arc.File.new("binary", "binary.png"), nil})
+    DummyDefinitionBinary.store({Arc.File.new("binary", "binary.png"), nil})
     assert true == File.exists?("arctest/uploads/original-binary.png")
-    assert true == File.exists?("arctest/uploads/thumb-binary.png")
   end
 
 end
