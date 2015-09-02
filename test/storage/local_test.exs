@@ -14,7 +14,7 @@ defmodule ArcTest.Storage.Local do
     def __versions, do: [:original, :thumb]
     def storage_dir(_, _), do: "arctest/uploads"
     def __storage, do: Arc.Storage.Local
-    def filename(version,  file), do: "#{version}-#{file.file_name}"
+    def filename(version,  {file, scope}), do: "#{version}-#{file.file_name}"
   end
 
   test "put, delete, get" do
